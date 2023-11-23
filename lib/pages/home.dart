@@ -1,4 +1,5 @@
 import 'package:demo1/models/category_model.dart';
+import 'package:demo1/models/diet_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -11,14 +12,16 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<CategoryModel> categories = [];
+  List<DietModel> diets = [];
 
-  void _getCategories() {
+  void _getInitialInfor() {
     categories = CategoryModel.getCategories();
+    diets = DietModel.getDiets();
   }
 
   @override
   Widget build(BuildContext context) {
-    _getCategories();
+    _getInitialInfor();
     return Scaffold(
       appBar: appBar(),
       body: Column(
@@ -28,10 +31,105 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(
             height: 40,
           ),
-          _categoriesSection()
+          _categoriesSection(),
+          const SizedBox(
+            height: 40,
+          ),
+          _diestSection()
         ],
       ),
     );
+  }
+
+  Column _diestSection() {
+    return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(left: 20),
+              child: Text(
+                'Recomendation\nfor diet',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            Container(
+              height: 240,
+              
+              child: ListView.separated(
+                itemBuilder: (context, index) {
+                  return Container(
+                    width: 210,
+                    decoration: BoxDecoration(
+                      color:diets[index].boxColor.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                      SvgPicture.asset(diets[index].iconPath),
+                      Text(diets[index].name,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                      ),),
+                      Text(
+                        diets[index].level + '|' + diets[index].duration + '|' + diets[index].calories,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xFF7B6F72),
+                        ),
+
+                      ),
+                      Container(
+                        height: 45,
+                        width: 130,
+                        child: Center(
+                          child: Text("view", 
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: diets[index].viewIsSelected ? Colors.white :Color(0xffC5BBF2),
+                          ),),
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              diets[index].viewIsSelected ? Color(0xff9DCEFF): Colors.transparent,
+                              diets[index].viewIsSelected ? Color(0xff92A3FD): Colors.transparent,
+                            ]
+                          ),
+                          
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+
+                      )
+
+
+                    ]),
+                  );
+                },
+                // here it used to maintian space between the item
+                separatorBuilder: (context, index) => SizedBox(
+                  width: 25,
+                ),
+                itemCount: diets.length,
+                scrollDirection: Axis.horizontal,
+                shrinkWrap: true,
+                padding: EdgeInsets.only(left: 20,right: 20),
+                
+              ),
+            ),
+          ],
+        );
   }
 
   Column _categoriesSection() {
